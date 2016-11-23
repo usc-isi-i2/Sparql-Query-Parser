@@ -608,7 +608,8 @@ class SQParser(object):
             for i, query in enumerate(json_obj['SPARQL']):
                 parsed = {k:v for (k,v) in json_obj.iteritems() if k != 'SPARQL'}
                 parsed['id'] += '-' + str(i+1)
-                parsed['SPARQL'] = SQParser.parse_string(query)
+                parsed['SPARQL'] = SQParser.parse_string(query.replace('\n', ''))
+                parsed['orig_query'] = query
                 ans.append(parsed)
             return ans
 
