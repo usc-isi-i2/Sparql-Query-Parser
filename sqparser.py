@@ -611,6 +611,19 @@ class SQParser(object):
                 q['group-by']['limit'] = limit
         return q
 
+
+    @staticmethod
+    def remove_avg_queries(q):
+        vars = q['select']['variables']
+        if isinstance(vars, dict):
+            if vars['type'] != 'simple':
+                return None
+        if isinstance(vars, list):
+            for v in vars:
+                if v['type'] != 'simple':
+                    return None
+        return q
+
     @staticmethod
     def parse_schema_payload(**params):
 
@@ -619,9 +632,11 @@ class SQParser(object):
             for i, query in enumerate(json_obj['SPARQL']):
                 parsed = {k:v for (k,v) in json_obj.iteritems() if k != 'SPARQL'}
                 parsed['id'] += '-' + str(i+1)
-                parsed['SPARQL'] = SQParser.add_limit_query(SQParser.parse_string(query.replace('\n', '')))
-                parsed['orig_query'] = query
-                ans.append(parsed)
+                sparql = SQParser.remove_avg_queries(SQParser.add_limit_query(SQParser.parse_string(query.replace('\n', ''))))
+                if sparql:
+                    parsed['SPARQL'] = sparql
+                    parsed['orig_query'] = query
+                    ans.append(parsed)
             return ans
 
         input_path = params['input_path']
