@@ -601,6 +601,17 @@ class SQParser(object):
             file_handler.close()
 
     @staticmethod
+    def add_limit_query(q, limit=500):
+        if 'group-by' not in q:
+            q['group-by'] = dict()
+            q['group-by']['limit'] = limit
+        else:
+            gb = q['group-by']
+            if 'limit' not in gb:
+                q['group-by']['limit'] = limit
+        return q
+
+    @staticmethod
     def parse_schema_payload(**params):
 
         def parse_payload_json(json_obj):
@@ -608,7 +619,7 @@ class SQParser(object):
             for i, query in enumerate(json_obj['SPARQL']):
                 parsed = {k:v for (k,v) in json_obj.iteritems() if k != 'SPARQL'}
                 parsed['id'] += '-' + str(i+1)
-                parsed['SPARQL'] = SQParser.parse_string(query.replace('\n', ''))
+                parsed['SPARQL'] = SQParser.add_limit_query(SQParser.parse_string(query.replace('\n', '')))
                 parsed['orig_query'] = query
                 ans.append(parsed)
             return ans
