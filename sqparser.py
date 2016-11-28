@@ -250,8 +250,16 @@ class SQParser(object):
         return ans
 
     def __sqf_func_filter_contain(text):
+        #print text
         content = re_brackets_most_s.search(text).group(0).strip()
-        source, target = re.split(', ', content) 
+        if len(re.split(', ', content)) == 2:
+            source, target = re.split(', ', content)
+        else:
+            splits = re.split(', ', content)
+            source = splits[0]
+            target = ", ".join(splits[1:])
+            print source
+            print target
         source = SQParser.parse_subcomponent(source)
         target = target.strip('"')
         target = target.strip('\'')
