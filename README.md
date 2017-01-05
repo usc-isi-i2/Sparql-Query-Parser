@@ -1,6 +1,10 @@
 # Sparql-Query-Parser
 a pure python utility to parse sparql query into json format
 
+The magic incantation to invoke the parser is
+```
+python sqparser.py -i ~/github/dig/dig-groundtruth-data/memex-2016-october-eval/nov-queries/isi_aggregate.json -m payload -o ~/xxx
+```
 
 ## Command Line Example Usuage
 
